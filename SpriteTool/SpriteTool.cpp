@@ -31,7 +31,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     LPSTR lpCmdLine, int nCmdShow)
 {
-    Window window (hInstance, 800,600,L"Test", L"Å×½ºÆ®");
+    DirectCore::GetInstance()->Init();
+    Window window (hInstance, 1920,1080,L"SpriteTool", L"SpriteTool");
     window.Init(WndProc, nCmdShow);
     window.Run();
 

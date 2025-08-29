@@ -125,6 +125,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Direct2DBitmap.cpp" />
+    <ClCompile Include="DirectCore.cpp" />
+    <ClCompile Include="FileUtils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -132,7 +135,11 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Direct2DBitmap.h" />
+    <ClInclude Include="DirectCore.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Type.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
