@@ -94,10 +94,12 @@ LRESULT Window::HandleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 
 		case ID_FILE_SAVE:
 		{
+			if (m_targetBitmap == nullptr)
+				return 0;
+
 			wchar_t path[MAX_PATH] = L"";
 			FileUtils::SaveFile(m_hWnd, path);
-
-			DirectCore::GetInstance()->Direct2DSaveBitmapToPng(path, m_rt);
+			DirectCore::GetInstance()->Direct2DSaveBitmapToPng(m_hWnd, path, m_rt, m_targetBitmap);
 
 			return 0;
 		}

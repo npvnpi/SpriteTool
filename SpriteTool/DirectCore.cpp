@@ -154,17 +154,45 @@ Direct2DBitmap* DirectCore::Direct2DLoadBitmap(const wchar_t* filePath, ID2D1Ren
 
 bool DirectCore::Direct2DSaveBitmapToPng(HWND hWnd, wchar_t* path, ID2D1RenderTarget* rt, Direct2DBitmap* targetBitmap)
 {
-	const D2D1_SIZE_U ps = targetBitmap->GetD2D1Bitmap()->GetPixelSize();
-	
-	IWICBitmap* wicBitmap = nullptr;
-	HRESULT hr = m_pWICFactory->CreateBitmap(
-		ps.width, ps.height,
-		GUID_WICPixelFormat32bppPBGRA, // D2D 렌더타겟과 동일한 premultiplied BGRA
-		WICBitmapCacheOnLoad,
-		&wicBitmap
-	);
-	if (FAILED(hr)) 
-		return false;
+    const UINT w = (UINT)targetBitmap->GetWidth();
+    const UINT h = (UINT)targetBitmap->GetHeight();
+    const UINT stride = w * 4;
+    const size_t bufSize = size_t(stride) * h;
 
-	return false;
+    IStream* stm = nullptr;
+    HRESULT hr = SHCreateStreamOnFileEx(path,
+        STGM_CREATE | STGM_WRITE | STGM_SHARE_EXCLUSIVE,
+        0, TRUE, nullptr, &stm);
+    if (FAILED(hr)) return false;
+
+    IWICBitmapEncoder* enc = nullptr;
+    hr = m_pWICFactory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &enc);
+    if (SUCCEEDED(hr)) hr = enc->Initialize(stm, WICBitmapEncoderNoCache);
+
+    IWICBitmapFrameEncode* frame = nullptr;
+    IPropertyBag2* opts = nullptr;
+    if (SUCCEEDED(hr)) hr = enc->CreateNewFrame(&frame, &opts);
+    if (opts) opts->Release();
+    if (SUCCEEDED(hr)) hr = frame->Initialize(nullptr);
+
+    if (SUCCEEDED(hr)) hr = frame->SetSize(w, h);
+
+    // ★ Straight BGRA로 저장
+    if (SUCCEEDED(hr)) {
+        WICPixelFormatGUID fmt = GUID_WICPixelFormat32bppBGRA;
+        hr = frame->SetPixelFormat(&fmt);
+    }
+
+    if (SUCCEEDED(hr)) {
+        hr = frame->WritePixels(h, stride, (UINT)bufSize,
+            const_cast<BYTE*>(targetBitmap->RefBuffer()));
+    }
+
+    if (SUCCEEDED(hr)) hr = frame->Commit();
+    if (SUCCEEDED(hr)) hr = enc->Commit();
+
+    if (frame) frame->Release();
+    if (enc) enc->Release();
+    if (stm) stm->Release();
+    return SUCCEEDED(hr);
 }

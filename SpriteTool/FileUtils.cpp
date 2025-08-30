@@ -49,8 +49,5 @@ void FileUtils::SaveFile(HWND hWnd, wchar_t* filePath)
     ofn.nFilterIndex = 1;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-    // 저장 대화상자
-    if (GetSaveFileName(&ofn)) {
-        MessageBoxW(hWnd, filePath, L"저장 경로", MB_OK);
-    }
+    GetSaveFileName(&ofn);
 }

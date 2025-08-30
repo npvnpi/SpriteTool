@@ -7,6 +7,7 @@
 #include <wincodec.h>    // WIC (이미지 디코더/인코더)
 #include <wrl/client.h>
 #include <vector>
+#include <shlwapi.h>
 #include "Type.h"
 #include "Direct2DBitmap.h"
 #include "DirectCore.h"
